@@ -83,6 +83,11 @@ def openStudy(study_path, driver, pgconst):
 
     sel300 = driver.find_element_by_xpath("/html/body/div[" + str(pgconst) + "]/div[3]/ul/li[3]")
     sel300.click()
+    
+    sort_btn = driver.find_element_by_css_selector("#root > div > main > div > div > div > div > div.MuiPaper-root.MuiCard-root.MuiPaper-elevation1.MuiPaper-rounded > div > div > div > div.jss97 > div > div > div > table > thead > tr > th:nth-child(10) > span > div")
+    sort_btn.click()
+    
+    
     return(driver)
 
 def get_emails(date, driver):
@@ -91,10 +96,13 @@ def get_emails(date, driver):
     
     OUTPUT: result list of email and number of submissions
     '''
-    table = driver.find_element_by_css_selector('#root > div > main > div > div > div > div > div.MuiPaper-root.MuiCard-root.MuiPaper-elevation1.MuiPaper-rounded > div > div > div > div.jss97 > div > div > div > table > tbody')
-
+    try:
+        table = driver.find_element_by_css_selector('#root > div > main > div > div > div > div > div.MuiPaper-root.MuiCard-root.MuiPaper-elevation1.MuiPaper-rounded > div > div > div > div.jss97 > div > div > div > table > tbody')
+    except:
+        time.sleep(2)
+        table = driver.find_element_by_css_selector('#root > div > main > div > div > div > div > div.MuiPaper-root.MuiCard-root.MuiPaper-elevation1.MuiPaper-rounded > div > div > div > div.jss97 > div > div > div > table > tbody')
 #iterate through participants
-
+    isDate = False
     participant_email = []
     participant_subm = []
     for row in table.find_elements_by_css_selector('tr'):
@@ -105,8 +113,9 @@ def get_emails(date, driver):
             except:
                 time.sleep(3)
                 enroll_date = driver.find_element_by_css_selector('#root > div > main > div > div > div > div > div.MuiPaper-root.MuiCard-root.MuiPaper-elevation1.MuiPaper-rounded > div > div > div > div.jss97 > div > div > div > table > tbody > tr:nth-child(' + str(row_num) + ') > td:nth-child(10)')
-            
+            print(enroll_date.text)
             if enroll_date.text[:10] == date:
+                isDate = True
                 email_ob = driver.find_element_by_css_selector('#root > div > main > div > div > div > div > div.MuiPaper-root.MuiCard-root.MuiPaper-elevation1.MuiPaper-rounded > div > div > div > div.jss97 > div > div > div > table > tbody > tr:nth-child(' + str(row_num) + ') > td:nth-child(5)')
                 email = email_ob.text.split('@')[0]
                 print(email)
@@ -131,6 +140,9 @@ def get_emails(date, driver):
                 participant_subm.append(submissions)
                 driver.close()
                 driver.switch_to.window(driver.window_handles[0])
+            else:
+                if isDate == True:
+                    break
         except:
             pass
     return(participant_email, participant_subm)
@@ -206,8 +218,16 @@ def openOutlook(driver):
     email_btn.click()
     driver.switch_to.window(driver.window_handles[1])
     
-    time.sleep(3)    
-    email_search_activate = driver.find_element_by_id("searchBoxId-Mail")
+    time.sleep(2)
+    try:
+        email_search_activate = driver.find_element_by_id("searchBoxId-Mail")
+    except:
+        try:
+            time.sleep(2)
+            email_search_activate = driver.find_element_by_id("searchBoxId-Mail")
+        except:
+            time.sleep(10)
+            email_search_activate = driver.find_element_by_id("searchBoxId-Mail")
     email_search_activate.click()
     email_search = driver.find_element_by_xpath("/html/body/div[2]/div/div[1]/div/div[1]/div[2]/div/div/div/div/div[1]/div[2]/div/div/div/div/div[1]/div/div[2]/div/input")
     search_btn = driver.find_element_by_xpath("/html/body/div[2]/div/div[1]/div/div[1]/div[2]/div/div/div/div/div[1]/div[2]/div/div/div/div/div[1]/button")
