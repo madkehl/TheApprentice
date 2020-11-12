@@ -14,6 +14,14 @@ path_EDL = "#root > div > main > div > div > div.MuiGrid-root.MuiGrid-item.MuiGr
 pgconst_SBDL = 4
 pgconst_EDL = 4
 
+email_MW = ''
+pass_MW = ''
+
+email_Pitt = ''
+pass_Pitt =''
+
+email_SONA = ''
+pass_SONA = ''
 
 #MW funcs
 
@@ -194,11 +202,11 @@ def openOutlook(driver):
     '''
     
     time.sleep(5)
-    email_btn = driver.find_element_by_xpath("/html/body/div[1]/div[5]/div[3]/div/div[2]/div[4]/div[3]/div[1]/div[1]/div/a")
+    email_btn = driver.find_element_by_xpath("/html/body/div[1]/div[5]/div[3]/div/div[2]/div[2]/div[3]/div[1]/div/div/a")
     email_btn.click()
     driver.switch_to.window(driver.window_handles[1])
     
-    
+    time.sleep(3)    
     email_search_activate = driver.find_element_by_id("searchBoxId-Mail")
     email_search_activate.click()
     email_search = driver.find_element_by_xpath("/html/body/div[2]/div/div[1]/div/div[1]/div[2]/div/div/div/div/div[1]/div[2]/div/div/div/div/div[1]/div/div[2]/div/input")
@@ -271,7 +279,11 @@ def transform(name):
     takes names as given from the other script and cleans them
     '''
     name_s = name.split(',')
-    new_name = name_s[1] + ' ' + name_s[0]
+    try:
+        new_name = name_s[1] + ' ' + name_s[0]
+    except:
+        print('WEIRD NAME ENTRY')
+        new_name = name_s[0]
     return(new_name.lstrip())
 
 def sonaLogin(email, passw):
